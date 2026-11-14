@@ -1,0 +1,23 @@
+name: Re-run gate
+on:
+  pull_request_review:
+    types: [submitted]
+permissions: {}
+jobs:
+  rerun:
+    name: Re-run review gate
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Re-run failed Gate runs on the head commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          ids=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs?event=pull_request&head_sha=$HEAD" \
+            --jq '.workflow_runs[] | select(.name == "Gate" and .conclusion == "failure") | .id')
+          echo "failed_runs=$ids"
+          for id in $ids; do
+            gh api -X POST "repos/$GITHUB_REPOSITORY/actions/runs/$id/rerun-failed-jobs"
+          done

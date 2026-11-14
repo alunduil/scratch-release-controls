@@ -1,0 +1,21 @@
+name: Gate
+on:
+  pull_request:
+permissions: {}
+jobs:
+  gate:
+    name: Review gate
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - name: Pass only when the head commit has a review
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          n=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR/reviews" \
+            --jq "[.[] | select(.commit_id == \"$HEAD\")] | length")
+          echo "attempt=$GITHUB_RUN_ATTEMPT head=$HEAD reviews_on_head=$n"
+          test "$n" -gt 0
