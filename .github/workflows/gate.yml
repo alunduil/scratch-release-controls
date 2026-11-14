@@ -1,0 +1,15 @@
+name: Gate
+on:
+  pull_request:
+  pull_request_review:
+    types: [submitted]
+permissions: {}
+jobs:
+  gate:
+    name: Review gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail on pull_request, pass on pull_request_review
+        run: |
+          echo "event=$GITHUB_EVENT_NAME sha=$GITHUB_SHA head=${{ github.event.pull_request.head.sha }}"
+          test "$GITHUB_EVENT_NAME" = pull_request_review
