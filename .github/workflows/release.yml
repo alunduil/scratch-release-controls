@@ -10,4 +10,4 @@ jobs:
       - name: Report the secret
         env:
           S: ${{ secrets.PUBLISH_SECRET }}
-        run: echo "variant=main sha=$GITHUB_SHA ref=$GITHUB_REF secret_len=${#S}"
+        run: echo "variant=off-branch sha=$GITHUB_SHA ref=$GITHUB_REF secret_len=${#S}"
