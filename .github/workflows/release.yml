@@ -5,9 +5,9 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    environment: publish
+
     steps:
       - name: Report the secret
         env:
           S: ${{ secrets.PUBLISH_SECRET }}
-        run: echo "variant=main sha=$GITHUB_SHA ref=$GITHUB_REF secret_len=${#S}"
+        run: echo "variant=no-env sha=$GITHUB_SHA ref=$GITHUB_REF secret_len=${#S}"
